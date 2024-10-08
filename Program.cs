@@ -4,6 +4,7 @@ namespace Talabat.APIS
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine("Hello Div");
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
