@@ -5,6 +5,7 @@ namespace Talabat.APIS
         public static void Main(string[] args)
         {
             Console.WriteLine("Hello Div");
+            Console.WriteLine("Hello Session01");
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
