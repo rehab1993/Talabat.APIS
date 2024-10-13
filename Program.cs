@@ -29,7 +29,8 @@ namespace Talabat.APIS
             });
            // builder.Services.AddScoped<IGenericRepository<Product>,GenericRepository<Product>>();
            builder.Services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
-            builder.Services.AddAutoMapper(m=>m.AddProfile(new MappingProfiles()));
+            //builder.Services.AddAutoMapper(m=>m.AddProfile(new MappingProfiles()));
+            builder.Services.AddAutoMapper(typeof(MappingProfiles));
             #endregion
           
 
@@ -64,6 +65,7 @@ namespace Talabat.APIS
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseStaticFiles();
 
             app.UseHttpsRedirection();
 
