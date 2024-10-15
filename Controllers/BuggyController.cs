@@ -29,7 +29,7 @@ namespace Talabat.APIS.Controllers
         }
         [HttpGet("BadRequest")]
         public ActionResult GetBadRequest() { 
-            return BadRequest();
+            return BadRequest(new ApiResponse(400));
         }
         [HttpGet("BadRequest/{id}")]
         public ActionResult GetBadRequest(int id) {

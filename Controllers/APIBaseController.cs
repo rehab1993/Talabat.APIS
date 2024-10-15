@@ -7,5 +7,6 @@ namespace Talabat.APIS.Controllers
     [ApiController]
     public class APIBaseController : ControllerBase
     {
+
     }
 }
