@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using Talabat.APIS.Extensions;
 using Talabat.APIS.Helpers;
 using Talabat.APIS.MiddleWares;
 using Talabat.Core.Entities;
+using Talabat.Core.Entities.Identity;
 using Talabat.Core.Repositories;
 using Talabat.Repository;
 using Talabat.Repository.Data;
@@ -28,9 +30,9 @@ namespace Talabat.APIS
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddDbContext<APIDbContext>(optios=>
+            builder.Services.AddDbContext<APIDbContext>(optinos=>
             {
-                optios.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                optinos.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 
             });
             // builder.Services.AddScoped<IGenericRepository<Product>,GenericRepository<Product>>();
@@ -42,12 +44,18 @@ namespace Talabat.APIS
             });
 
 
-            builder.Services.AddApplicationServices();
+           
             builder.Services.AddSingleton<IConnectionMultiplexer>(Options =>
             {
                 var Connection = builder.Configuration.GetConnectionString("RedisConnection");
                 return ConnectionMultiplexer.Connect(Connection);
             });
+            builder.Services.AddApplicationServices();
+          
+            builder.Services.AddIdentityServices(builder.Configuration);
+
+
+
             #endregion
 
 
@@ -64,10 +72,20 @@ namespace Talabat.APIS
             {
                 var DbContext = Services.GetRequiredService<APIDbContext>();
                 await DbContext.Database.MigrateAsync();
-                await DbContextSeed.SeedAsync(DbContext);
+
 
                 var IdentityDbContext = Services.GetRequiredService<AppIdentityDbContext>();
                 await IdentityDbContext.Database.MigrateAsync();
+
+
+
+                var UserManger = Services.GetRequiredService<UserManager<AppUser>>();
+                await AppIdentityDbContextSeed.SeedUserAsync(UserManger);
+
+                await DbContextSeed.SeedAsync(DbContext);
+
+
+               
             }
             catch (Exception ex) {
                 var Logger = LoggerFactory.CreateLogger<Program>();
@@ -86,16 +104,16 @@ namespace Talabat.APIS
                 app.UseSwaggerMiddleware();
 
             }
-            app.UseStaticFiles();
-           // app.UseStatusCodePagesWithRedirects("/errors/{0}");
+          
+          //  app.UseStatusCodePagesWithRedirects("/errors/{0}");
            
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-            
-
-
+         
             app.MapControllers();
 
             #endregion
